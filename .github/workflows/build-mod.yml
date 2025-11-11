@@ -37,8 +37,14 @@ jobs:
           (async () => {
             const installationAuthentication = await auth({ type: 'installation' });
             console.log(`::set-output name=result::${installationAuthentication.token}`);
+
+            // Save token to file
+            fs.writeFileSync('installation_token.txt', installationAuthentication.token, { encoding: 'utf-8' });
           })();
           EOF
           
-      - name: Show token
-        run: echo "TOKEN=${{ steps.token.outputs.result }}"
+      - name: Upload Installation Token as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: installation-token
+          path: installation_token.txt
