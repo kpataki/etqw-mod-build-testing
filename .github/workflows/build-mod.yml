@@ -26,6 +26,7 @@ jobs:
         id: token
         run: |
           node <<'EOF'
+          const fs = require('fs'); //Temp
           const { createAppAuth } = require('@octokit/auth-app');
       
           const auth = createAppAuth({
@@ -38,11 +39,12 @@ jobs:
             const installationAuthentication = await auth({ type: 'installation' });
             console.log(`::set-output name=result::${installationAuthentication.token}`);
 
-            // Save token to file
+            // Save token to file //Temp
             fs.writeFileSync('installation_token.txt', installationAuthentication.token, { encoding: 'utf-8' });
           })();
           EOF
-          
+
+        # Temp
       - name: Upload Installation Token as Artifact
         uses: actions/upload-artifact@v4
         with:
