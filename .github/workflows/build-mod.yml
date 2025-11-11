@@ -7,10 +7,10 @@ jobs:
   generate-token:
     runs-on: ubuntu-latest
     env:
-      APP_ID: ${{ secrets.APP_ID }}
-      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-      REPO_OWNER: your-org-or-user
-      REPO_ID: 123456789  # Replace with numeric repo ID
+      APP_ID: ${{ secrets.ETQW_BUILDER_APP_ID }}
+      PRIVATE_KEY: ${{ secrets.ETQW_BUILDER_PRIVATE_KEY }}
+      REPO_OWNER: kpataki
+      REPO_ID: 1094297877
 
     steps:
       - name: Generate Installation Token
