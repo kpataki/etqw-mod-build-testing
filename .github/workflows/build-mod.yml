@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_ID: 2273447
-      INSTALLATION_ID: ${{ seconds.ETQW_BUILDER_INSTALL_ID }}
+      INSTALLATION_ID: ${{ secrets.ETQW_BUILDER_INSTALL_ID }}
       PRIVATE_KEY: ${{ secrets.ETQW_BUILDER_PRIVATE_KEY }}
       REPO_OWNER: kpataki
       REPO_ID: 1094297877
