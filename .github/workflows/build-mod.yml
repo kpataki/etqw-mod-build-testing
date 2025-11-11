@@ -13,22 +13,35 @@ jobs:
       REPO_ID: 1094297877
 
     steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install @octokit/auth-app
+      
       - name: Generate Installation Token
         id: token
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { createAppAuth } = require('@octokit/auth-app');
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
+        run: |
+          node <<'EOF'
+          const { createAppAuth } = require('@octokit/auth-app');
       
-            const auth = createAppAuth({
-              appId: parseInt(process.env.APP_ID),
-              privateKey: process.env.PRIVATE_KEY,
-              installationId: parseInt(process.env.INSTALLATION_ID),
-            });
+          const auth = createAppAuth({
+            appId: parseInt(process.env.APP_ID),
+            privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+            installationId: parseInt(process.env.INSTALLATION_ID),
+          });
       
+          (async () => {
             const installationAuthentication = await auth({ type: 'installation' });
-      
-            return installationAuthentication.token;
-
+            console.log(`::set-output name=result::${installationAuthentication.token}`);
+          })();
+          EOF
+          
       - name: Show token
         run: echo "TOKEN=${{ steps.token.outputs.result }}"
