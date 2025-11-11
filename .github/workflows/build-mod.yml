@@ -1,0 +1,48 @@
+name: Build ETQW Mod
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-token:
+    runs-on: ubuntu-latest
+    env:
+      APP_ID: ${{ secrets.APP_ID }}
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      REPO_OWNER: your-org-or-user
+      REPO_ID: 123456789  # Replace with numeric repo ID
+
+    steps:
+      - name: Generate Installation Token
+        id: token
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const jwt = require('jsonwebtoken');
+
+            // Replace escaped newlines with real newlines
+            const privateKey = process.env.PRIVATE_KEY.replace(/\\n/g, '\n');
+
+            // Create JWT for the GitHub App
+            const payload = {
+              iat: Math.floor(Date.now() / 1000),
+              exp: Math.floor(Date.now() / 1000) + 600, // 10 minutes
+              iss: process.env.APP_ID
+            };
+            const appJWT = jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+
+            // Get installations for the GitHub App
+            const installations = await github.rest.apps.listInstallationsForAuthenticatedApp();
+            const installation = installations.data.find(i => i.account.login === process.env.REPO_OWNER);
+            if (!installation) throw new Error('Installation not found');
+
+            // Create short-lived installation token
+            const tokenResp = await github.rest.apps.createInstallationAccessToken({
+              installation_id: installation.id,
+              repository_ids: [parseInt(process.env.REPO_ID)]
+            });
+
+            return tokenResp.data.token;
+
+      - name: Show token
+        run: echo "TOKEN=${{ steps.token.outputs.result }}"
