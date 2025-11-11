@@ -7,7 +7,8 @@ jobs:
   generate-token:
     runs-on: ubuntu-latest
     env:
-      APP_ID: ${{ secrets.ETQW_BUILDER_APP_ID }}
+      APP_ID: 2273447
+      INSTALLATION_ID: ${{ seconds.ETQW_BUILD_INSTALL_ID }}
       PRIVATE_KEY: ${{ secrets.ETQW_BUILDER_PRIVATE_KEY }}
       REPO_OWNER: kpataki
       REPO_ID: 1094297877
@@ -23,10 +24,6 @@ jobs:
       
       - name: Generate Installation Token
         id: token
-        env:
-          APP_ID: ${{ secrets.APP_ID }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
         run: |
           node <<'EOF'
           const { createAppAuth } = require('@octokit/auth-app');
